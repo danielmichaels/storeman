@@ -6,9 +6,10 @@
 tmp/
 .env
 bin/
-*.json
 .idea/httpRequests/*
-
+data/
+dist/
+node_modules/
 # User-specific stuff
 .idea/**/workspace.xml
 .idea/**/tasks.xml
@@ -95,5 +96,3 @@ fabric.properties
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
-
-dist/
