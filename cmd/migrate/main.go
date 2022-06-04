@@ -84,9 +84,9 @@ func main() {
 }
 
 func usage() {
-	fmt.Printf(usagePrefix)
+	fmt.Print(usagePrefix)
 	flags.PrintDefaults()
-	fmt.Printf(usageCommands)
+	fmt.Print(usageCommands)
 }
 
 var (
