@@ -1,14 +1,14 @@
 package main
 
 import (
-	"context"
-	"database/sql"
 	"github.com/danielmichaels/storeman/internal/config"
 	"github.com/danielmichaels/storeman/internal/server"
+	"github.com/danielmichaels/storeman/internal/store"
+	"github.com/danielmichaels/storeman/internal/store/sqlite"
 	"github.com/danielmichaels/storeman/internal/templates"
 	"github.com/go-chi/httplog"
+	_ "github.com/mattn/go-sqlite3"
 	"log"
-	"time"
 )
 
 func main() {
@@ -25,10 +25,10 @@ func run() error {
 		Concise:  cfg.Logger.Concise,
 		LogLevel: cfg.Logger.Level,
 	})
-	//db, err := openDB(cfg)
-	//if err != nil {
-	//	logger.Fatal().Err(err).Msg("failed to open database. exiting")
-	//}
+	db, err := store.OpenDB(cfg)
+	if err != nil {
+		logger.Fatal().Err(err).Msg("failed to open database. exiting")
+	}
 	logger.Info().Msg("database connection established")
 	templateCache, err := templates.NewTemplateCache()
 	if err != nil {
@@ -39,6 +39,7 @@ func run() error {
 		Config:   cfg,
 		Logger:   logger,
 		Template: templateCache,
+		Store:    sqlite.NewStore(db),
 	}
 
 	err = app.Serve()
@@ -47,28 +48,4 @@ func run() error {
 	}
 
 	return nil
-}
-
-// openDB returns a sql connection pool
-func openDB(cfg *config.Conf) (*sql.DB, error) {
-	// Use sql.Open() to create an empty connection pool, using the DSN from the
-	// config struct
-	db, err := sql.Open("sqlite3", cfg.Db.Dsn)
-	if err != nil {
-		return nil, err
-	}
-
-	// Create a context with a 5-second timeout deadline
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	// PingContext establishes a new connection to the database, passing in the
-	// ctx as a parameter. If the connection couldn't be established within
-	// 5 seconds, an error will be raised.
-	err = db.PingContext(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	return db, nil
 }

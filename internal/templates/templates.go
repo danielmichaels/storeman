@@ -8,6 +8,13 @@ import (
 	"time"
 )
 
+// TemplateData holds any template data which is passed into the template.
+// render and defaultData are added via this struct.
+type TemplateData struct {
+	Title string
+}
+
+// humanDate creates a human-readable datetime for use as a template filter.
 func humanDate(t time.Time) string {
 	if t.IsZero() {
 		return ""
@@ -19,6 +26,8 @@ var functions = template.FuncMap{
 	"humanDate": humanDate,
 }
 
+// NewTemplateCache stores template data in memory. Creating a template cache
+// prevents the disk being read for every invocation of a template in the server.
 func NewTemplateCache() (map[string]*template.Template, error) {
 	cache := map[string]*template.Template{}
 
@@ -37,8 +46,8 @@ func NewTemplateCache() (map[string]*template.Template, error) {
 			return nil, err
 		}
 
-		// Collect any 'partials'
-		//ts, err = ts.ParseFS(templates.Files, "html/*.partial.tmpl")
+		//Collect any 'partials'
+		//ts, err = ts.ParseFS(ui.Files, "html/*.partial.tmpl")
 		//if err != nil {
 		//	return nil, err
 		//}
@@ -50,8 +59,4 @@ func NewTemplateCache() (map[string]*template.Template, error) {
 		cache[name] = ts
 	}
 	return cache, nil
-}
-
-type TemplateData struct {
-	Title string
 }

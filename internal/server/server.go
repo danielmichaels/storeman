@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/danielmichaels/storeman/internal/config"
+	"github.com/danielmichaels/storeman/internal/store"
 	"github.com/rs/zerolog"
 	"html/template"
 	"net/http"
@@ -19,6 +20,7 @@ type Server struct {
 	Config   *config.Conf
 	Logger   zerolog.Logger
 	Template map[string]*template.Template
+	Store    store.Store
 }
 
 func (app *Server) Serve() error {
