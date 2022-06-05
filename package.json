@@ -1,11 +1,11 @@
 {
   "scripts": {
-    "tailwind": "tailwindcss -i templates/static/css/main.css -o templates/static/css/theme.css -m",
-    "alpine": "npx esbuild index.js --outfile=templates/static/js/bundle.js --bundle --minify"
+    "tailwind": "tailwindcss -i ui/static/css/main.css -o ui/static/css/theme.css -m",
+    "alpine": "npx esbuild index.js --outfile=ui/static/js/bundle.js --bundle --minify"
   },
   "devDependencies": {
     "@tailwindcss/aspect-ratio": "^0.4.0",
-    "@tailwindcss/forms": "^0.5.0",
+    "@tailwindcss/forms": "^0.5.2",
     "tailwindcss": "^3.0.23"
   },
   "dependencies": {
