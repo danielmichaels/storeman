@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/danielmichaels/storeman/internal/templates"
+	"github.com/justinas/nosurf"
 	"net/http"
 )
 
@@ -33,4 +34,13 @@ func (app *Server) render(w http.ResponseWriter, status int, name string, td *te
 	w.WriteHeader(status)
 
 	buf.WriteTo(w)
+}
+
+func (app *Server) newTemplateData(r *http.Request) *templates.TemplateData {
+	return &templates.TemplateData{
+		Containers: []string{},
+		//Flash:           app.sessionManager.PopString(r.Context(), "flash"),
+		IsAuthenticated: false,
+		CSRFToken:       nosurf.Token(r),
+	}
 }

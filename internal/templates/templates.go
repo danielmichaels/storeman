@@ -16,6 +16,7 @@ type TemplateData struct {
 	IsAuthenticated bool
 	CSRFToken       string
 	Flash           string
+	Containers      []string
 }
 
 // humanDate creates a human-readable datetime for use as a template filter.
