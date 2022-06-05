@@ -20,11 +20,13 @@ func main() {
 // run is Storeman's entrypoint.
 func run() error {
 	cfg := config.AppConfig()
-	logger := httplog.NewLogger("web-server", httplog.Options{
+
+	logger := httplog.NewLogger("storeman-server", httplog.Options{
 		JSON:     cfg.Logger.Json,
 		Concise:  cfg.Logger.Concise,
 		LogLevel: cfg.Logger.Level,
 	})
+
 	db, err := store.OpenDB(cfg)
 	if err != nil {
 		logger.Fatal().Err(err).Msg("failed to open database. exiting")

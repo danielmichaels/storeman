@@ -11,7 +11,11 @@ import (
 // TemplateData holds any template data which is passed into the template.
 // render and defaultData are added via this struct.
 type TemplateData struct {
-	Title string
+	Title           string
+	Form            any
+	IsAuthenticated bool
+	CSRFToken       string
+	Flash           string
 }
 
 // humanDate creates a human-readable datetime for use as a template filter.
@@ -31,32 +35,27 @@ var functions = template.FuncMap{
 func NewTemplateCache() (map[string]*template.Template, error) {
 	cache := map[string]*template.Template{}
 
-	// Use fs.Glob() to get a slice of all the filepaths in the ui.Files embedded filesystem
-	// which match the pattern 'html/*page.tmpl'.
-	pages, err := fs.Glob(ui.Files, "html/*.page.tmpl")
+	pages, err := fs.Glob(ui.Files, "html/pages/*.tmpl")
 	if err != nil {
 		return nil, err
 	}
+
 	for _, page := range pages {
 		name := filepath.Base(page)
 
-		// Use ParseFS() to parse a specific page template from ui.Files
-		ts, err := template.New(name).Funcs(functions).ParseFS(ui.Files, page)
+		patterns := []string{
+			"html/base.tmpl",
+			"html/partials/*.tmpl",
+			page,
+		}
+
+		ts, err := template.New(name).Funcs(functions).ParseFS(ui.Files, patterns...)
 		if err != nil {
 			return nil, err
 		}
 
-		//Collect any 'partials'
-		//ts, err = ts.ParseFS(ui.Files, "html/*.partial.tmpl")
-		//if err != nil {
-		//	return nil, err
-		//}
-		// Collect any layouts
-		ts, err = ts.ParseFS(ui.Files, "html/*.layout.tmpl")
-		if err != nil {
-			return nil, err
-		}
 		cache[name] = ts
 	}
+
 	return cache, nil
 }

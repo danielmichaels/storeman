@@ -2,6 +2,7 @@ package server
 
 import (
 	"bytes"
+	"fmt"
 	"github.com/danielmichaels/storeman/internal/templates"
 	"net/http"
 )
@@ -16,17 +17,20 @@ func (app *Server) addDefaultData(td *templates.TemplateData, r *http.Request) *
 }
 
 // render is a template rendering helper. It uses a template cache to speed up delivery of templates
-func (app *Server) render(w http.ResponseWriter, r *http.Request, name string, td *templates.TemplateData) {
+func (app *Server) render(w http.ResponseWriter, status int, name string, td *templates.TemplateData) {
 	ts, ok := app.Template[name]
 	if !ok {
-		http.Error(w, "Template does not exist", 500)
+		err := fmt.Errorf("the template %q does not exist", name)
+		app.serverError(w, err)
 		return
 	}
 	buf := new(bytes.Buffer)
-	err := ts.Execute(buf, app.addDefaultData(td, r))
+	err := ts.ExecuteTemplate(buf, "base", td)
 	if err != nil {
-		http.Error(w, err.Error(), 500)
+		app.serverError(w, err)
 		return
 	}
+	w.WriteHeader(status)
+
 	buf.WriteTo(w)
 }
