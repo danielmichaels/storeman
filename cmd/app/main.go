@@ -7,6 +7,7 @@ import (
 	"github.com/danielmichaels/storeman/internal/store/sqlite"
 	"github.com/danielmichaels/storeman/internal/templates"
 	"github.com/go-chi/httplog"
+	"github.com/go-playground/form/v4"
 	_ "github.com/mattn/go-sqlite3"
 	"log"
 )
@@ -32,6 +33,9 @@ func run() error {
 		logger.Fatal().Err(err).Msg("failed to open database. exiting")
 	}
 	logger.Info().Msg("database connection established")
+
+	formDecoder := form.NewDecoder()
+
 	templateCache, err := templates.NewTemplateCache()
 	if err != nil {
 		logger.Fatal().Err(err).Msg("failed to create a template cache")
@@ -42,6 +46,7 @@ func run() error {
 		Logger:   logger,
 		Template: templateCache,
 		Store:    sqlite.NewStore(db),
+		Form:     formDecoder,
 	}
 
 	err = app.Serve()

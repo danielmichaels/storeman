@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/danielmichaels/storeman/internal/config"
 	"github.com/danielmichaels/storeman/internal/store"
+	"github.com/go-playground/form/v4"
 	"github.com/rs/zerolog"
 	"html/template"
 	"net/http"
@@ -21,6 +22,7 @@ type Server struct {
 	Logger   zerolog.Logger
 	Template map[string]*template.Template
 	Store    store.Store
+	Form     *form.Decoder
 }
 
 func (app *Server) Serve() error {
