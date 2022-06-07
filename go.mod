@@ -11,6 +11,7 @@ require (
 	github.com/mattn/go-sqlite3 v1.14.13
 	github.com/pressly/goose/v3 v3.5.3
 	github.com/rs/zerolog v1.26.1
+	golang.org/x/text v0.3.7
 )
 
 require github.com/pkg/errors v0.9.1 // indirect
