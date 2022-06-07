@@ -20,15 +20,17 @@ func (app *Server) routes() http.Handler {
 	fileServer := http.FileServer(neuteredFileSystem{http.FS(ui.Files)})
 	r.Handle("/static/*", fileServer)
 
+	// Public
 	r.Get("/", app.handleHomePage())
+	r.Get("/login", app.handleLogin())
+	r.Post("/login", app.handleLoginPost())
 
+	// Private
+	r.Group(func(r chi.Router) {
+		r.Get("/containers/create", app.handleContainerCreate())
+		//r.Post("/containers/create", app.handleContainerCreate())
+		r.Get("/containers/edit/{id}", app.handleContainerEdit())
+		//r.Put("/containers/edit/{id}", app.handleContainerEdit())
+	})
 	return r
-}
-
-func (app *Server) handleHomePage() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		app.render(w, r, "home.page.tmpl", &td.TemplateData{
-			Title: "Home",
-		})
-	}
 }
