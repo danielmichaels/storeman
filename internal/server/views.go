@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/danielmichaels/storeman/internal/templates"
+	"github.com/danielmichaels/storeman/internal/validator"
 	"github.com/go-chi/chi/v5"
 	"net/http"
 	"strconv"
@@ -20,10 +21,58 @@ func (app *Server) handleHomePage() http.HandlerFunc {
 		app.render(w, http.StatusOK, "home.tmpl", data)
 	}
 }
-func (app *Server) handleContainerCreate() http.HandlerFunc {
+func (app *Server) handleContainerCreateGet() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		var form containerForm
 		data := app.newTemplateData(r)
+		crumbs := []templates.BreadCrumb{
+			{Name: "Containers", Href: "/"},
+			{Name: "Create", Href: "/containers/create"},
+		}
+		data.BreadCrumbs = crumbs
+		data.Form = form
 		app.render(w, http.StatusOK, "create.tmpl", data)
+	}
+}
+
+type containerForm struct {
+	Title               string `form:"title"`
+	Notes               string `form:"notes"`
+	Location            string `form:"location"`
+	Image               []byte `form:"image"`
+	validator.Validator `form:"-"`
+}
+
+func (app *Server) handleContainerCreatePost() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var form containerForm
+
+		err := app.decodePostForm(r, &form)
+		if err != nil {
+			app.clientError(w, http.StatusBadRequest)
+			return
+		}
+		form.CheckField(validator.NotBlank(form.Title), "title", "This field cannot be blank")
+		// todo validator location and image in future
+
+		if !form.Valid() {
+			data := app.newTemplateData(r)
+			data.Form = form
+
+			app.render(w, http.StatusUnprocessableEntity, "create.tmpl", data)
+			return
+		}
+		// insert
+		id, err := app.Store.ContainerInsert(form.Title, form.Notes)
+		if err != nil {
+			app.serverError(w, err)
+			return
+		}
+
+		// flash success
+
+		// redirect to new container page
+		http.Redirect(w, r, fmt.Sprintf("/containers/edit/%d", id), http.StatusSeeOther)
 	}
 }
 
@@ -35,6 +84,9 @@ func (app *Server) handleContainerEdit() http.HandlerFunc {
 			app.serverError(w, errors.New("invalid container ID supplied"))
 		}
 		container, err := app.Store.ContainerGet(i)
+		if err != nil {
+			app.serverError(w, errors.New("invalid container ID supplied"))
+		}
 		data := app.newTemplateData(r)
 		data.Container = container
 		crumbs := []templates.BreadCrumb{

@@ -27,8 +27,8 @@ func (app *Server) routes() http.Handler {
 
 	// Private
 	r.Group(func(r chi.Router) {
-		r.Get("/containers/create", app.handleContainerCreate())
-		//r.Post("/containers/create", app.handleContainerCreate())
+		r.Get("/containers/create", app.handleContainerCreateGet())
+		r.Post("/containers/create", app.handleContainerCreatePost())
 		r.Get("/containers/edit/{id}", app.handleContainerEdit())
 		//r.Put("/containers/edit/{id}", app.handleContainerEdit())
 	})
