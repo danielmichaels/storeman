@@ -1,7 +1,10 @@
 package templates
 
 import (
+	"github.com/danielmichaels/storeman/internal/store/sqlite"
 	"github.com/danielmichaels/storeman/ui"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 	"html/template"
 	"io/fs"
 	"path/filepath"
