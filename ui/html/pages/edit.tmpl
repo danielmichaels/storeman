@@ -1,0 +1,6 @@
+{{define "title"}}Edit Container{{end}}
+{{ define "main"}}
+    {{ if .Container}}
+        {{ template "view-table-container" .}}
+    {{end}}
+{{end}}

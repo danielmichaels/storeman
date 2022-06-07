@@ -1,0 +1,22 @@
+{{define "title"}}Add a new container{{end}}
+
+{{define "main"}}
+  <h1>Add a new container</h1>
+    <p>This will generate a unique address for this container.</p>
+    <p>Items can be added now, or at a later date for this container.</p>
+    <p>Once created, a unique QR code will be generated which can then be printed and affixed to the container.</p>
+  <form method="POST" action="/containers/create">
+    <!-- include CSRF token -->
+    <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+    <div>
+      <label for="email"
+             class="block text-sm font-medium text-gray-700"></label>
+      <div class="mt-1">
+        <input type="email" name="email" id="email"
+               class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
+               placeholder="you@example.com">
+      </div>
+    </div>
+  </form>
+
+{{end}}

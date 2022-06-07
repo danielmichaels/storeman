@@ -38,9 +38,7 @@ func (app *Server) render(w http.ResponseWriter, status int, name string, td *te
 
 func (app *Server) newTemplateData(r *http.Request) *templates.TemplateData {
 	return &templates.TemplateData{
-		Containers: []string{},
-		//Flash:           app.sessionManager.PopString(r.Context(), "flash"),
-		IsAuthenticated: false,
+		IsAuthenticated: true,
 		CSRFToken:       nosurf.Token(r),
 	}
 }
