@@ -4,13 +4,22 @@ import (
 	"context"
 	"database/sql"
 	"github.com/danielmichaels/storeman/internal/config"
+	"github.com/danielmichaels/storeman/internal/store/sqlite"
 	"os"
 	"path/filepath"
 	"time"
 )
 
 type Store interface {
-	Example()
+	ContainerInsert(title, notes string) (int, error)
+	ContainerGet(id int) (*sqlite.Container, error)
+	ContainerGetAll() ([]*sqlite.Container, error)
+	ContainerDelete(id int) error
+
+	ItemInsert(name, description string, image []byte) (int, error)
+	ItemGet(id int) (*sqlite.Item, error)
+	ItemGetAll() ([]*sqlite.Item, error)
+	ItemDelete(id int) error
 }
 
 // OpenDB returns a sql connection pool

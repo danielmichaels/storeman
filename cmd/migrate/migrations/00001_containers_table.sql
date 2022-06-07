@@ -6,14 +6,20 @@ CREATE TABLE IF NOT EXISTS containers
     created_at DATE DEFAULT (datetime('now', 'utc')),
     updated_at DATE DEFAULT (datetime('now', 'utc')),
     url        TEXT,
-    code       TEXT
+    title      TEXT,
+    notes      TEXT,
+    image      BLOB,
+    qr_code    TEXT
 );
 CREATE TABLE IF NOT EXISTS items
 (
-    id          INTEGER NOT NULL,
+    id          INTEGER NOT NULL primary key AUTOINCREMENT,
     name        TEXT,
     description TEXT,
-    FOREIGN KEY (id) REFERENCES containers (id)
+    image       BLOB,
+    created_at DATE DEFAULT (datetime('now', 'utc')),
+    updated_at DATE DEFAULT (datetime('now', 'utc')),
+    FOREIGN KEY (id) REFERENCES containers (id) ON DELETE CASCADE
 );
 -- +goose StatementEnd
 
