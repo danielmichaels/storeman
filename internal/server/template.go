@@ -8,15 +8,6 @@ import (
 	"net/http"
 )
 
-// addDefaultData is a helper which will pre-fill the templateData struct with
-// default information that is used across several templates.
-func (app *Server) addDefaultData(td *templates.TemplateData, r *http.Request) *templates.TemplateData {
-	if td == nil {
-		td = &templates.TemplateData{}
-	}
-	return td
-}
-
 // render is a template rendering helper. It uses a template cache to speed up delivery of templates
 func (app *Server) render(w http.ResponseWriter, status int, name string, td *templates.TemplateData) {
 	ts, ok := app.Template[name]
