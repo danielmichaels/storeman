@@ -29,8 +29,8 @@ type TemplateData struct {
 	BreadCrumbs     []BreadCrumb
 	Containers      []*sqlite.Container
 	Container       *sqlite.Container
-	//Items           []*sqlite.Item
-	//Item            *sqlite.Item
+	Items           []*sqlite.Item
+	Item            *sqlite.Item
 }
 
 // humanDate creates a human-readable datetime for use as a template filter.

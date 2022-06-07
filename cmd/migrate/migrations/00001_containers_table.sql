@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS containers
     url        TEXT,
     title      TEXT,
     notes      TEXT,
+    location   TEXT,
     image      BLOB,
     qr_code    TEXT
 );
@@ -17,8 +18,8 @@ CREATE TABLE IF NOT EXISTS items
     name        TEXT,
     description TEXT,
     image       BLOB,
-    created_at DATE DEFAULT (datetime('now', 'utc')),
-    updated_at DATE DEFAULT (datetime('now', 'utc')),
+    created_at  DATE DEFAULT (datetime('now', 'utc')),
+    updated_at  DATE DEFAULT (datetime('now', 'utc')),
     FOREIGN KEY (id) REFERENCES containers (id) ON DELETE CASCADE
 );
 -- +goose StatementEnd

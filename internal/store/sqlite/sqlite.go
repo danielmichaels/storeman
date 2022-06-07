@@ -16,23 +16,29 @@ var (
 )
 
 type Container struct {
-	ID        int
-	Title     string
-	Notes     string
-	Location  string
+	ID    int
+	Title string
+	Notes string
+	// todo
+	Location string
+	// todo
+	Image     []byte
 	CreatedAt time.Time
 	UpdatedAt time.Time
-	Url       string
-	QRCode    string
+	// todo
+	Url string
+	// todo
+	QRCode string
 }
 
 type Item struct {
 	ID          int
 	Name        string
 	Description string
-	Image       []byte
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
+	// todo
+	Image     []byte
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }
 
 type store struct {
