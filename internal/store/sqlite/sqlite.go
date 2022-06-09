@@ -69,7 +69,29 @@ func (s store) ContainerInsert(title, notes string) (int, error) {
 
 	return int(id), nil
 }
+func (s store) ContainerUpdate(title, notes string, id int) (int, error) {
+	stmt := `
+	UPDATE containers
+	SET
+		title = $1,
+		notes = $2
+	WHERE
+		id = $3
+	RETURNING id`
+	ctx, cancel := context.WithTimeout(context.Background(), QueryCtx)
+	defer cancel()
+	var c Container
+	args := []interface{}{title, notes, id}
+	err := s.DB.QueryRowContext(ctx, stmt, args...).Scan(&c.ID)
+	if err != nil {
+		return 0, err
+	}
 
+	if c.ID == 0 {
+		return 0, ErrNoRecord
+	}
+	return c.ID, nil
+}
 func (s store) ContainerGet(id int) (*Container, error) {
 	stmt := `
 SELECT id, title, notes, url, qr_code, created_at, updated_at
@@ -201,18 +223,21 @@ WHERE id = $1
 	}
 	return i, nil
 }
-func (s store) ItemGetAll() ([]*Item, error) {
+func (s store) ItemGetAllByContainer(id int) ([]*Item, error) {
 	stmt := `
-SELECT id, name, description, image, created_at, updated_at
-FROM items
-ORDER BY updated_at DESC
-LIMIT $1 OFFSET $2
+SELECT i.id, i.name, i.description, i.image, i.created_at, i.updated_at
+FROM items i
+INNER JOIN containers c
+ON c.id = i.id
+WHERE c.id = $1
+ORDER BY i.updated_at DESC
+LIMIT $2 OFFSET $3
 `
 	ctx, cancel := context.WithTimeout(context.Background(), QueryCtx)
 	defer cancel()
 
 	// todo create filters and replace magic numbers
-	args := []any{"10", "0"}
+	args := []any{id, "10", "0"}
 
 	rows, err := s.DB.QueryContext(ctx, stmt, args...)
 	if err != nil {

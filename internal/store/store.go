@@ -12,13 +12,14 @@ import (
 
 type Store interface {
 	ContainerInsert(title, notes string) (int, error)
+	ContainerUpdate(title, notes string, id int) (int, error)
 	ContainerGet(id int) (*sqlite.Container, error)
 	ContainerGetAll() ([]*sqlite.Container, error)
 	ContainerDelete(id int) error
 
 	ItemInsert(name, description string, image []byte) (int, error)
 	ItemGet(id int) (*sqlite.Item, error)
-	ItemGetAll() ([]*sqlite.Item, error)
+	ItemGetAllByContainer(id int) ([]*sqlite.Item, error)
 	ItemDelete(id int) error
 }
 
