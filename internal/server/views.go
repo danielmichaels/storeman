@@ -21,19 +21,6 @@ func (app *Server) handleHomePage() http.HandlerFunc {
 		app.render(w, http.StatusOK, "home.tmpl", data)
 	}
 }
-func (app *Server) handleContainerCreateGet() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		var form containerForm
-		data := app.newTemplateData(r)
-		crumbs := []templates.BreadCrumb{
-			{Name: "Containers", Href: "/"},
-			{Name: "Create", Href: "/containers/create"},
-		}
-		data.BreadCrumbs = crumbs
-		data.Form = form
-		app.render(w, http.StatusOK, "create.tmpl", data)
-	}
-}
 
 type containerForm struct {
 	Title               string `form:"title"`
@@ -43,36 +30,48 @@ type containerForm struct {
 	validator.Validator `form:"-"`
 }
 
-func (app *Server) handleContainerCreatePost() http.HandlerFunc {
+func (app *Server) handleContainerCreate() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var form containerForm
 
-		err := app.decodePostForm(r, &form)
-		if err != nil {
-			app.clientError(w, http.StatusBadRequest)
-			return
+		if r.Method == http.MethodPost {
+			err := app.decodePostForm(r, &form)
+			if err != nil {
+				app.clientError(w, http.StatusBadRequest)
+				return
+			}
+			form.CheckField(validator.NotBlank(form.Title), "title", "This field cannot be blank")
+			// todo validator location and image in future
+
+			if !form.Valid() {
+				data := app.newTemplateData(r)
+				data.Form = form
+
+				app.render(w, http.StatusUnprocessableEntity, "create.tmpl", data)
+				return
+			}
+			// insert
+			id, err := app.Store.ContainerInsert(form.Title, form.Notes)
+			if err != nil {
+				app.serverError(w, err)
+				return
+			}
+
+			// flash success
+
+			// redirect to new container page
+			http.Redirect(w, r, fmt.Sprintf("/containers/%d", id), http.StatusSeeOther)
 		}
-		form.CheckField(validator.NotBlank(form.Title), "title", "This field cannot be blank")
-		// todo validator location and image in future
 
-		if !form.Valid() {
-			data := app.newTemplateData(r)
-			data.Form = form
-
-			app.render(w, http.StatusUnprocessableEntity, "create.tmpl", data)
-			return
+		data := app.newTemplateData(r)
+		crumbs := []templates.BreadCrumb{
+			{Name: "Containers", Href: "/"},
+			{Name: "Create", Href: "/containers/create"},
 		}
-		// insert
-		id, err := app.Store.ContainerInsert(form.Title, form.Notes)
-		if err != nil {
-			app.serverError(w, err)
-			return
-		}
-
-		// flash success
-
-		// redirect to new container page
-		http.Redirect(w, r, fmt.Sprintf("/containers/edit/%d", id), http.StatusSeeOther)
+		data.BreadCrumbs = crumbs
+		data.Form = form
+		app.render(w, http.StatusOK, "create.tmpl", data)
+		return
 	}
 }
 
@@ -83,18 +82,93 @@ func (app *Server) handleContainerEdit() http.HandlerFunc {
 		if err != nil {
 			app.serverError(w, errors.New("invalid container ID supplied"))
 		}
+
 		container, err := app.Store.ContainerGet(i)
 		if err != nil {
 			app.serverError(w, errors.New("invalid container ID supplied"))
 		}
+
+		var form containerForm
+		form.Title = container.Title
+		form.Notes = container.Notes
+		err = app.decodePostForm(r, &form)
+		if err != nil {
+			app.clientError(w, http.StatusBadRequest)
+			return
+		}
+
+		form.CheckField(validator.NotBlank(form.Title), "title", "This field cannot be blank")
+		// todo validator location and image in future
+
+		if !form.Valid() {
+			data := app.newTemplateData(r)
+			data.Form = form
+			app.render(w, http.StatusUnprocessableEntity, "container-edit.tmpl", data)
+			return
+		}
+
+		if r.Method == http.MethodPost {
+			row, err := app.Store.ContainerUpdate(form.Title, form.Notes, i)
+			if err != nil {
+				data := app.newTemplateData(r)
+				data.Form = form
+				app.render(w, http.StatusUnprocessableEntity, "container-edit.tmpl", data)
+				return
+			}
+			http.Redirect(w, r, fmt.Sprintf("/containers/%d", row), http.StatusSeeOther)
+		}
+
 		data := app.newTemplateData(r)
+		data.Form = form
 		data.Container = container
 		crumbs := []templates.BreadCrumb{
 			{Name: "Containers", Href: "/"},
 			{Name: "Edit", Href: fmt.Sprintf("/containers/edit/%s", id)},
 		}
 		data.BreadCrumbs = crumbs
+		app.render(w, http.StatusOK, "container-edit.tmpl", data)
+
+	}
+}
+func (app *Server) handleContainerViewAndAddItems() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		id := chi.URLParam(r, "id")
+		i, err := strconv.Atoi(id)
+		if err != nil {
+			app.serverError(w, errors.New("invalid container ID supplied"))
+		}
+		container, err := app.Store.ContainerGet(i)
+		if err != nil {
+			app.serverError(w, errors.New("invalid container ID supplied"))
+		}
+
+		items, err := app.Store.ItemGetAllByContainer(i)
+		fmt.Println(items)
+		if err != nil {
+			fmt.Println(err.Error())
+			app.serverError(w, errors.New("invalid container ID supplied"))
+		}
+		data := app.newTemplateData(r)
+		data.Container = container
+		data.Items = items
+		crumbs := []templates.BreadCrumb{
+			{Name: "Containers", Href: "/"},
+			{Name: "View", Href: fmt.Sprintf("/containers/%s", id)},
+		}
+		data.BreadCrumbs = crumbs
 		app.render(w, http.StatusOK, "edit.tmpl", data)
+	}
+}
+
+func (app *Server) handleItemCreate() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+
+	}
+}
+func (app *Server) handleItemEdit() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		id := 2
+		http.Redirect(w, r, fmt.Sprintf("/containers/edit/%d", id), http.StatusSeeOther)
 	}
 }
 

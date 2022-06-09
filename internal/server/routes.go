@@ -27,10 +27,20 @@ func (app *Server) routes() http.Handler {
 
 	// Private
 	r.Group(func(r chi.Router) {
-		r.Get("/containers/create", app.handleContainerCreateGet())
-		r.Post("/containers/create", app.handleContainerCreatePost())
-		r.Get("/containers/edit/{id}", app.handleContainerEdit())
-		//r.Put("/containers/edit/{id}", app.handleContainerEdit())
+		r.Get("/containers/create", app.handleContainerCreate())
+		r.Post("/containers/create", app.handleContainerCreate())
+
+		r.Get("/containers/{id}/edit", app.handleContainerEdit())
+		r.Post("/containers/{id}/edit", app.handleContainerEdit())
+
+		r.Get("/containers/{id}", app.handleContainerViewAndAddItems())
+		r.Post("/containers/{id}", app.handleContainerViewAndAddItems())
+
+		r.Get("/containers/{id}/items/create", app.handleItemCreate())
+		r.Post("/containers/{id}/items/create", app.handleItemCreate())
+
+		r.Get("/containers/{id}/items/create/{item}", app.handleItemEdit())
+		r.Post("/containers/{id}/items/create/{item}", app.handleItemEdit())
 	})
 	return r
 }

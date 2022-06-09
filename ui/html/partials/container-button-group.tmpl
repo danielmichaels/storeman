@@ -1,10 +1,12 @@
 {{define "container-button-group"}}
   <div x-data="{buttonDropdown: false}">
     <div class="relative z-50 inline-flex shadow-sm rounded-md">
+      <a href="/containers/{{.Container.ID}}/items/create">
       <button type="button"
               class="relative inline-flex items-center px-4 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500">
         Add Item
       </button>
+        </a>
       <div class="-ml-px relative block">
         <button @click="buttonDropdown = !buttonDropdown"
                 @click.away="buttonDropdown = false" type="button"
@@ -32,7 +34,7 @@
         >
           <div class="py-1" role="none">
             <!-- Active: "bg-gray-100 text-gray-900", Not Active: "text-gray-700" -->
-            <a href="/containers/edit/{{.Container.ID}}"
+            <a href="/containers/{{.Container.ID}}/edit"
                class="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100 hover:text-gray-900"
                role="menuitem" tabindex="-1" id="option-menu-item-0">Edit
               Container</a>
