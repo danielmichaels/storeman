@@ -33,6 +33,7 @@ type Container struct {
 
 type Item struct {
 	ID          int
+	ContainerId uint64
 	Name        string
 	Description string
 	// todo
@@ -178,15 +179,15 @@ WHERE
 	}
 	return nil
 }
-func (s store) ItemInsert(name, description string, image []byte) (int, error) {
+func (s store) ItemInsert(fk int, name, description string, image []byte) (int, error) {
 	stmt := `
-		INSERT INTO items (name, description, image)
-		VALUES ($1, $2, $3)
+		INSERT INTO items (container_id, name, description, image)
+		VALUES ($1, $2, $3, $4)
 `
 	ctx, cancel := context.WithTimeout(context.Background(), QueryCtx)
 	defer cancel()
 
-	result, err := s.DB.ExecContext(ctx, stmt, name, description, []byte("image byte"))
+	result, err := s.DB.ExecContext(ctx, stmt, fk, name, description, image)
 	if err != nil {
 		return 0, err
 	}
@@ -225,11 +226,9 @@ WHERE id = $1
 }
 func (s store) ItemGetAllByContainer(id int) ([]*Item, error) {
 	stmt := `
-SELECT i.id, i.name, i.description, i.image, i.created_at, i.updated_at
+SELECT i.id, i.name, i.description, i.image, i.created_at, i.updated_at, i.container_id
 FROM items i
-INNER JOIN containers c
-ON c.id = i.id
-WHERE c.id = $1
+WHERE i.container_id = $1
 ORDER BY i.updated_at DESC
 LIMIT $2 OFFSET $3
 `
@@ -256,6 +255,7 @@ LIMIT $2 OFFSET $3
 			&item.Image,
 			&item.CreatedAt,
 			&item.UpdatedAt,
+			&item.ContainerId,
 		)
 		if err != nil {
 			return nil, err
