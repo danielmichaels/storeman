@@ -47,7 +47,7 @@ func (app *Server) handleContainerCreate() http.HandlerFunc {
 				data := app.newTemplateData(r)
 				data.Form = form
 
-				app.render(w, http.StatusUnprocessableEntity, "create.tmpl", data)
+				app.render(w, http.StatusUnprocessableEntity, "container-create.tmpl", data)
 				return
 			}
 			// insert
@@ -70,7 +70,7 @@ func (app *Server) handleContainerCreate() http.HandlerFunc {
 		}
 		data.BreadCrumbs = crumbs
 		data.Form = form
-		app.render(w, http.StatusOK, "create.tmpl", data)
+		app.render(w, http.StatusOK, "container-create.tmpl", data)
 		return
 	}
 }
@@ -156,7 +156,7 @@ func (app *Server) handleContainerViewAndAddItems() http.HandlerFunc {
 			{Name: "View", Href: fmt.Sprintf("/containers/%s", id)},
 		}
 		data.BreadCrumbs = crumbs
-		app.render(w, http.StatusOK, "edit.tmpl", data)
+		app.render(w, http.StatusOK, "container-view.tmpl", data)
 	}
 }
 
