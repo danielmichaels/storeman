@@ -4,16 +4,18 @@
 {{define "main"}}
   <div class="px-4 sm:px-6 lg:px-8">
       {{ template "breadcrumbs" .}}
-    <form method="POST" action="/containers/{{.Container.ID}}/items/create">
+    {{with .Form.NonFieldErrors}}
+      <p class="mt-2 text-sm text-red-600"
+         id="server-error">{{.}}</p>
+    {{end}}
+    <form method="POST" action="/containers/{{.Container.ID}}/items/{{.Item.ID}}/edit">
       <!-- Include the CSRF token -->
       <input type='hidden' name='csrf_token' value='{{.CSRFToken}}'>
       <div class="pt-8 space-y-6 sm:pt-10 sm:space-y-5">
         <div>
           <h3 class="text-lg leading-6 font-medium text-gray-900">
-            Create Container</h3>
-          <p class="mt-1 max-w-2xl text-sm text-gray-500">
-            Fill in some details, and then you can start adding items to this
-            container.</p>
+            Edit Item</h3>
+          <p class="mt-1 max-w-2xl text-sm text-gray-500">Update this items information.</p>
         </div>
         <div class="space-y-6 sm:space-y-5">
           <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
@@ -21,7 +23,7 @@
                    class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
               Title </label>
             <div class="mt-1 sm:mt-0 sm:col-span-2">
-                {{with .Form.FieldErrors.name}}
+                {{with .Form.FieldErrors.title}}
                   <p class="mt-2 text-sm text-red-600"
                      id="name-error">{{.}}</p>
                 {{end}}
@@ -43,7 +45,11 @@
             </div>
           </div>
           <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-          <label for="cover-photo" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"> Cover photo </label>
+          <label for="cover-photo" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"> Item image </label>
+            {{ if .Item.Image}}
+            {{.Item.Image}}
+
+            {{else}}
           <div class="mt-1 sm:mt-0 sm:col-span-2">
             <div class="max-w-lg flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
               <div class="space-y-1 text-center">
@@ -61,6 +67,7 @@
               </div>
             </div>
           </div>
+            {{end}}
         </div>
         </div>
       </div>

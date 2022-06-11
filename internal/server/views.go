@@ -235,6 +235,73 @@ func (app *Server) handleItemCreate() http.HandlerFunc {
 }
 func (app *Server) handleItemEdit() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		id, err := app.readParamInt("id", r)
+		if err != nil {
+			app.serverError(w, err)
+			return
+		}
+		itemId, err := app.readParamInt("item", r)
+		if err != nil {
+			app.serverError(w, err)
+			return
+		}
+
+		data := app.newTemplateData(r)
+		var form itemForm
+
+		container, err := app.Store.ContainerGet(id)
+		if err != nil {
+			app.serverError(w, err)
+			return
+		}
+		data.Container = container
+		item, err := app.Store.ItemGet(itemId)
+		if err != nil {
+			app.serverError(w, err)
+			return
+		}
+		data.Item = item
+		form.Name = container.Title
+		form.Description = item.Description
+		form.Image = item.Image
+
+		err = app.decodePostForm(r, &form)
+		if err != nil {
+			app.clientError(w, http.StatusBadRequest)
+			return
+		}
+
+		form.CheckField(validator.NotBlank(form.Name), "name", "This field cannot be blank")
+
+		if !form.Valid() {
+			data.Form = form
+			app.render(w, http.StatusUnprocessableEntity, "item-edit.tmpl", data)
+			return
+		}
+
+		if r.Method == http.MethodPost {
+			//todo this is broken
+			row, err := app.Store.ItemUpdate(itemId, form.Name, form.Description, []byte("image goes here"))
+			if err != nil {
+				form.NonFieldErrors = []string{err.Error()}
+				data.Form = form
+				app.render(w, http.StatusUnprocessableEntity, "item-edit.tmpl", data)
+				//app.serverError(w, err)
+				return
+			}
+			http.Redirect(w, r, fmt.Sprintf("/containers/%d/items/%d/detail", row, itemId), http.StatusSeeOther)
+		}
+		data.Form = form
+		data.Container = container
+		data.Item = item
+		crumbs := []templates.BreadCrumb{
+			{Name: "Containers", Href: "/"},
+			{Name: "Items", Href: fmt.Sprintf("/containers/%d", id)},
+			{Name: "Edit", Href: fmt.Sprintf("/containers/%d/items/%d/edit", id, itemId)},
+		}
+		data.BreadCrumbs = crumbs
+		app.render(w, http.StatusOK, "item-edit.tmpl", data)
+
 	}
 }
 func (app *Server) handleItemDetail() http.HandlerFunc {

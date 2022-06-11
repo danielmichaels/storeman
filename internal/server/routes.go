@@ -39,8 +39,9 @@ func (app *Server) routes() http.Handler {
 		r.Get("/containers/{id}/items/create", app.handleItemCreate())
 		r.Post("/containers/{id}/items/create", app.handleItemCreate())
 
-		r.Get("/containers/{id}/items/create/{item}", app.handleItemEdit())
-		r.Post("/containers/{id}/items/create/{item}", app.handleItemEdit())
+		r.Get("/containers/{id}/items/{item}", app.handleItemDetail())
+		r.Get("/containers/{id}/items/{item}/edit", app.handleItemEdit())
+		r.Post("/containers/{id}/items/{item}/edit", app.handleItemEdit())
 	})
 	return r
 }
