@@ -7,7 +7,7 @@
       <div class="flex items-center space-x-5">
         <div class="flex-shrink-0">
           <div class="relative">
-            <img class="h-16 w-16 rounded-full"
+            <img class="h-16 w-16 rounded-md"
                  src="https://via.placeholder.com/100x100"
                  alt="">
             <span class="absolute inset-0 shadow-inner rounded-full"
@@ -27,16 +27,16 @@
     <div class="mt-8 flex flex-col">
         {{if .Items}}
             {{range .Items}}
-              <div class="bg-white shadow overflow-hidden sm:rounded-md">
+              <div class="bg-white shadow overflow-hidden">
                 <ul role="list" class="divide-y divide-gray-200">
                   <li>
-                    <a href="/containers/{{$.Container.ID}}/items/{{.ID}}/detail"
+                    <a href="/containers/{{$.Container.ID}}/items/{{.ID}}"
                        class="block hover:bg-gray-50">
                       <div class="flex items-center px-4 py-4 sm:px-6">
                         <div class="min-w-0 flex-1 flex items-center">
                           <div class="flex-shrink-0">
-                            <img class="h-12 w-12 rounded-full"
-                                 src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                            <img class="h-12 w-12 rounded-md"
+                                 src="https://via.placeholder.com/50x50"
                                  alt="">
                           </div>
                           <div class="min-w-0 flex-1 px-4 md:grid md:grid-cols-2 md:gap-4">
@@ -44,7 +44,7 @@
                               <p class="text-sm font-medium text-indigo-600 truncate">
                                   {{.Name | titleCase}}</p>
                               <p class="mt-2 flex items-center text-sm text-gray-500 truncate">
-                                <span class="truncate">{{.Description | }}</span>
+                                <span class="truncate">{{.Description }}</span>
                               </p>
                             </div>
                             <div class="hidden md:block">
@@ -56,7 +56,8 @@
                                   {{if (eq .UpdatedAt .CreatedAt)}}
                                   {{else if (ne .UpdatedAt .CreatedAt)}}
                                     <p class="mt-2 flex items-center text-sm text-gray-500">
-                                      Last Updated {{.UpdatedAt | humanDate}}</p>
+                                      Last
+                                      Updated {{.UpdatedAt | humanDate}}</p>
                                   {{end}}
                               </div>
                             </div>
