@@ -199,6 +199,32 @@ func (s store) ItemInsert(fk int, name, description string, image []byte) (int, 
 
 	return int(id), nil
 }
+
+func (s store) ItemUpdate(id int, name, description string, image []byte) (int, error) {
+	stmt := `
+	UPDATE items
+	SET
+		name = $2,
+		description = $3,
+		image = $4
+	WHERE
+		id = $1
+	RETURNING id`
+	ctx, cancel := context.WithTimeout(context.Background(), QueryCtx)
+	defer cancel()
+	var c Container
+	args := []interface{}{id, name, description, image}
+	err := s.DB.QueryRowContext(ctx, stmt, args...).Scan(&c.ID)
+	if err != nil {
+		return 0, err
+	}
+
+	if c.ID == 0 {
+		return 0, ErrNoRecord
+	}
+	return c.ID, nil
+}
+
 func (s store) ItemGet(id int) (*Item, error) {
 
 	stmt := `
