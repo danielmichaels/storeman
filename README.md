@@ -6,6 +6,9 @@
 [![Contributors](https://img.shields.io/github/contributors/danielmichaels/storeman)](https://github.com/danielmichaels/storeman/graphs/contributors)
 [![License](http://img.shields.io/:license-apache2-blue.svg?style=flat-square)](LICENSE)
 
+**Note: Until this is tagged with a release do not expect any backward compatibility. This may 
+break without notice.**
+
 > Storeman looks after the contents of your storage. Don't trust marker pens to remember what's in
 that box on the shelf.
 
