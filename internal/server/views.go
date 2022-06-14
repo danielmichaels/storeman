@@ -249,6 +249,13 @@ func (app *Server) handleItemEdit() http.HandlerFunc {
 		data := app.newTemplateData(r)
 		var form itemForm
 
+		crumbs := []templates.BreadCrumb{
+			{Name: "Containers", Href: "/"},
+			{Name: "Items", Href: fmt.Sprintf("/containers/%d", id)},
+			{Name: "Edit", Href: fmt.Sprintf("/containers/%d/items/%d/edit", id, itemId)},
+		}
+		data.BreadCrumbs = crumbs
+
 		container, err := app.Store.ContainerGet(id)
 		if err != nil {
 			app.serverError(w, err)
@@ -318,6 +325,13 @@ func (app *Server) handleItemDetail() http.HandlerFunc {
 		}
 		data := app.newTemplateData(r)
 
+		crumbs := []templates.BreadCrumb{
+			{Name: "Containers", Href: "/"},
+			{Name: "Items", Href: fmt.Sprintf("/containers/%d", id)},
+			{Name: "Detail", Href: fmt.Sprintf("/containers/%d/items/%d", id, itemId)},
+		}
+		data.BreadCrumbs = crumbs
+
 		container, err := app.Store.ContainerGet(id)
 		if err != nil {
 			fmt.Println("invalid cont id")
@@ -332,12 +346,6 @@ func (app *Server) handleItemDetail() http.HandlerFunc {
 		}
 		data.Container = container
 		data.Item = item
-		crumbs := []templates.BreadCrumb{
-			{Name: "Containers", Href: "/"},
-			{Name: "Items", Href: fmt.Sprintf("/containers/%d", id)},
-			{Name: "Detail", Href: fmt.Sprintf("/containers/%d/items/%d", id, itemId)},
-		}
-		data.BreadCrumbs = crumbs
 		app.render(w, http.StatusOK, "item-view.tmpl", data)
 	}
 }
