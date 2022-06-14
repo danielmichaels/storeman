@@ -75,7 +75,8 @@ func (s store) ContainerUpdate(title, notes string, id int) (int, error) {
 	UPDATE containers
 	SET
 		title = $1,
-		notes = $2
+		notes = $2,
+		updated_at = datetime('now')
 	WHERE
 		id = $3
 	RETURNING id`
@@ -200,29 +201,31 @@ func (s store) ItemInsert(fk int, name, description string, image []byte) (int, 
 	return int(id), nil
 }
 
-func (s store) ItemUpdate(id int, name, description string, image []byte) (int, error) {
+func (s store) ItemUpdate(id int, name, description string, image []byte) error {
 	stmt := `
 	UPDATE items
 	SET
-		name = $2,
-		description = $3,
-		image = $4
+		name = $1,
+		description = $2,
+		image = $3,
+		updated_at = datetime('now')
 	WHERE
-		id = $1
+		id = $4
 	RETURNING id`
-	ctx, cancel := context.WithTimeout(context.Background(), QueryCtx)
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
-	var c Container
-	args := []interface{}{id, name, description, image}
+	var c Item
+	args := []interface{}{name, description, image, id}
 	err := s.DB.QueryRowContext(ctx, stmt, args...).Scan(&c.ID)
 	if err != nil {
-		return 0, err
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return errors.New("item does not exist")
+		default:
+			return err
+		}
 	}
-
-	if c.ID == 0 {
-		return 0, ErrNoRecord
-	}
-	return c.ID, nil
+	return nil
 }
 
 func (s store) ItemGet(id int) (*Item, error) {

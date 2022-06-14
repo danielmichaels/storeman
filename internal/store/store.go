@@ -18,7 +18,7 @@ type Store interface {
 	ContainerDelete(id int) error
 
 	ItemInsert(fk int, name, description string, image []byte) (int, error)
-	ItemUpdate(id int, name, description string, image []byte) (int, error)
+	ItemUpdate(id int, name, description string, image []byte) error
 	ItemGet(id int) (*sqlite.Item, error)
 	ItemGetAllByContainer(id int) ([]*sqlite.Item, error)
 	ItemDelete(id int) error
