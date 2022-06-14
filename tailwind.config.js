@@ -1,10 +1,11 @@
 module.exports = {
-  content: ["./templates/**/*tmpl"],
+  content: ["./ui/**/*tmpl"],
   theme: {
     extend: {},
   },
   plugins: [
       require('@tailwindcss/aspect-ratio'),
       require('@tailwindcss/forms'),
+      require('@tailwindcss/typography'),
   ],
 }

@@ -1,0 +1,85 @@
+{{ define "container-list-table" }}
+  <div class="px-4 sm:px-6 lg:px-8">
+      {{ template "breadcrumbs" .}}
+    <div class="sm:flex sm:items-center">
+      <div class="sm:flex-auto">
+        <h1 class="text-xl font-semibold text-gray-900">
+          Containers</h1>
+          {{ if .Containers}}
+            <p class="mt-2 text-sm text-gray-700">A list of all storage
+              containers registered with Storeman.</p>
+          {{ else }}
+            <p class="mt-2 text-sm text-gray-700">No containers added yet,
+              click Add Container to create your first.</p>
+          {{end}}
+      </div>
+      <div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
+        <a href="/containers/create">
+          <button type="button"
+                  class="inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:w-auto">
+            Add Container
+          </button>
+        </a>
+      </div>
+    </div>
+      {{if .Containers}}
+    <div class="mt-8 flex flex-col  sm:block">
+      <!-- mobile only -->
+        {{range .Containers}}
+          <div class="bg-white shadow overflow-hidden block ">
+            <ul role="list" class="divide-y divide-gray-200">
+              <li>
+                <a href="/containers/{{.ID}}"
+                   class="block hover:bg-gray-50">
+                  <div class="flex items-center px-4 py-4 sm:px-6">
+                    <div class="min-w-0 flex-1 flex items-center">
+                      <div class="flex-shrink-0">
+                        <img class="h-12 w-12 rounded-md"
+                             src="https://via.placeholder.com/50x50"
+                             alt="">
+                      </div>
+                      <div class="min-w-0 flex-1 px-4 md:grid md:grid-cols-2 md:gap-4">
+                        <div>
+                          <p class="text-sm font-medium text-indigo-600 truncate">
+                              {{.Title | titleCase}}</p>
+                          <p class="mt-2 flex items-center text-sm text-gray-500 truncate">
+                            <span class="truncate">{{.Notes | titleCase }}</span>
+                          </p>
+                        </div>
+                        <div class="hidden md:block">
+                          <div>
+                            <p class="text-sm text-gray-900">
+                              Created on
+                              <time datetime="{{.CreatedAt}}">{{.CreatedAt | humanDate}}</time>
+                            </p>
+                              {{if (eq .UpdatedAt .CreatedAt)}}
+                                <!-- display nothing -->
+                              {{else if (ne .UpdatedAt .CreatedAt)}}
+                                <p class="mt-2 flex items-center text-sm text-gray-500">
+                                  Updated on {{.UpdatedAt | humanDate}}</p>
+                              {{end}}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div>
+                      <!-- Heroicon name: solid/chevron-right -->
+                      <svg class="h-5 w-5 text-gray-400"
+                           xmlns="http://www.w3.org/2000/svg"
+                           viewBox="0 0 20 20"
+                           fill="currentColor" aria-hidden="true">
+                        <path fill-rule="evenodd"
+                              d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                              clip-rule="evenodd"/>
+                      </svg>
+                    </div>
+                  </div>
+                </a>
+              </li>
+            </ul>
+          </div>
+        {{ end}}
+        {{end}}
+    </div>
+  </div>
+{{ end }}

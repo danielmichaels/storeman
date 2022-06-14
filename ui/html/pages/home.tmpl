@@ -1,0 +1,44 @@
+{{ template "base" .}}
+{{define "title"}}Home{{end}}
+
+{{define "main"}}
+    {{ if .IsAuthenticated}}
+        {{ template "container-list-table" .}}
+    {{else}}
+      <div class="relative z-10 mb-8 md:mb-2 md:px-6">
+        <div class="text-base max-w-prose lg:max-w-none">
+          <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+            Storeman</p>
+        </div>
+      </div>
+      <div class="relative md:p-6">
+        <div class="lg:grid lg:grid-cols-1 lg:gap-6">
+          <div class="prose prose-indigo prose-sm text-gray-500 lg:max-w-none">
+            <p>Storage tracking using QR codes, sticky tape and Golang.</p>
+            <p>Storeman looks after the contents of your storage. Don't trust
+              marker pens to remember what's in that box on the shelf.</p>
+            <ol role="list">
+              <li>No sign-ups, just a single password. Easy to share with
+                family.
+              </li>
+              <li>Catalogue your moving boxes, storage containers and stop
+                wondering where you put that <i>thing</i>.
+              </li>
+              <li>Take photos of every item for easier recognition, or just add
+                notes.
+              </li>
+            </ol>
+            <p>It's self-hosted, no one is going out of business and deleting
+              your data. See the
+              <a href="https://github.com/danielmichaels/storeman">repo</a> to
+              get started.</p>
+            <p>Maintained by <a href="https://danielms.site">Daniel
+                Michaels</a> and built to fulfil my need to know what I've
+              stored in my many storage containers.
+            </p>
+            <p>Apache-2.0 Licensed</p>
+          </div>
+        </div>
+      </div>
+    {{end}}
+{{ end }}

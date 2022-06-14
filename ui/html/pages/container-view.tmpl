@@ -1,0 +1,6 @@
+{{define "title"}}Container details{{end}}
+{{ define "main"}}
+    {{ if .Container}}
+        {{ template "container-table" .}}
+    {{end}}
+{{end}}

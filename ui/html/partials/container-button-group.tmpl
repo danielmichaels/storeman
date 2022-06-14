@@ -1,0 +1,58 @@
+{{define "container-button-group"}}
+  <div x-data="{buttonDropdown: false}">
+    <div class="relative z-50 inline-flex shadow-sm rounded-md">
+      <a href="/containers/{{.Container.ID}}/items/create">
+      <button type="button"
+              class="relative inline-flex items-center px-4 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500">
+        Add Item
+      </button>
+        </a>
+      <div class="-ml-px relative block">
+        <button @click="buttonDropdown = !buttonDropdown"
+                @click.away="buttonDropdown = false" type="button"
+                class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
+                id="option-menu-button" aria-expanded="true"
+                aria-haspopup="true">
+          <span class="sr-only">Open options</span>
+          <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg"
+               viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd"
+                  d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                  clip-rule="evenodd"/>
+          </svg>
+        </button>
+        <div class="origin-top-right absolute right-0 mt-2 -mr-1 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
+             role="menu" aria-orientation="vertical"
+             aria-labelledby="option-menu-button" tabindex="-1"
+             x-show="buttonDropdown"
+             x-transition:enter="transition ease-out duration-100 "
+             x-transition:enter-start="opacity-0 scale-95"
+             x-transition:enter-end="opacity-100 scale-100"
+             x-transition:leave="transition ease-in duration-75 "
+             x-transition:leave-start="opacity-100 scale-100"
+             x-transition:leave-end="opacity-0 scale-95"
+        >
+          <div class="py-1" role="none">
+            <!-- Active: "bg-gray-100 text-gray-900", Not Active: "text-gray-700" -->
+            <a href="/containers/{{.Container.ID}}/edit"
+               class="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100 hover:text-gray-900"
+               role="menuitem" tabindex="-1" id="option-menu-item-0">Edit
+              Container</a>
+            <a href="#"
+               class="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100 hover:text-gray-900"
+               role="menuitem" tabindex="-1" id="option-menu-item-1">View QR
+              Code</a>
+            <a href="#"
+               class="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100 hover:text-gray-900"
+               role="menuitem" tabindex="-1" id="option-menu-item-2">Print
+              Items</a>
+            <hr>
+            <a href="#"
+               class="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100 hover:text-gray-900"
+               role="menuitem" tabindex="-1" id="option-menu-item-2">Delete Container</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{{end}}
